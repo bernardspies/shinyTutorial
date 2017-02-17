@@ -60,6 +60,31 @@ selectInput(inputId = "y_axis",
 ```
 
 ```{r}
+selected_df <- reactive({
+        subset_df <- compare_provinces[,c(1,2,
+                             which(colnames(compare_provinces) == input$x_axis),
+                             which(colnames(compare_provinces) == input$y_axis))]
+        colnames(subset_df) <- c("province","total","x","y")
+        subset_df
+  
+  
+})
+
+```
+
+
+```{r}
+renderPlot({
+  ggplot(selected_df(),aes(x,y, label=province)) +
+  geom_point(aes(size=total),
+             alpha = 0.8, color = "midnightblue") + 
+  geom_text(vjust = 2.5) +
+  theme_minimal() + 
+    labs(x = input$x_axis,
+         y = input$y_axis)
+  
+  
+})
 
 
 ```
