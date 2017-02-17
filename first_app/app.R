@@ -44,7 +44,7 @@ server <- function(input, output) {
           mortality %>% 
             filter(province %in% input$province) %>% 
             ggplot(aes(year,deaths, color = indicator)) + 
-            facet_wrap(~province) +
+            facet_wrap(~province, scales = "free") +
             geom_line(alpha = 0.8, size = 1.5) +
             theme_minimal(base_size=18)
      
