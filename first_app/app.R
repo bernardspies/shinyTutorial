@@ -8,26 +8,29 @@
 #
 
 library(shiny)
+library(southafricastats)
+
+mortality <- mortality_zaf %>%
+             filter((indicator != "All causes"))
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
    
    # Application title
-   titlePanel("Old Faithful Geyser Data"),
+   titlePanel("South Africa Stats"),
    
    # Sidebar with a slider input for number of bins 
    sidebarLayout(
       sidebarPanel(
-         sliderInput("bins",
-                     "Number of bins:",
-                     min = 1,
-                     max = 50,
-                     value = 30)
+         selectInput(inputId = "province",
+                     label = "Choose a province:",
+                     choices = unique(mortality_zaf$province),
+                     selected = "Gauteng")
       ),
       
       # Show a plot of the generated distribution
       mainPanel(
-         plotOutput("distPlot")
+         plotOutput("LinePlot")
       )
    )
 )
@@ -35,14 +38,14 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
-   output$distPlot <- renderPlot({
-      # generate bins based on input$bins from ui.R
-      x    <- faithful[, 2] 
-      bins <- seq(min(x), max(x), length.out = input$bins + 1)
-      
-      # draw the histogram with the specified number of bins
-      hist(x, breaks = bins, col = 'darkgray', border = 'white')
-   })
+        output$LinePlot <- renderPlot({
+          mortality %>% 
+            filter(province == input$province) %>% 
+            ggplot(aes(year,deaths, color = indicator)) + 
+            geom_line(alpha = 0.8, size = 1.5) +
+            theme_minimal(base_size=18)
+     
+         })
 }
 
 # Run the application 

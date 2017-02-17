@@ -16,3 +16,7 @@ library("leaflet")
 library("DT")
 library("devtools")
 library("southafricastats")
+
+head(mortality_zaf)
+
+unique(mortality_zaf$province)
