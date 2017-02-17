@@ -1,0 +1,60 @@
+---
+title: "Mortality in South Africa"
+runtime: shiny
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(southafricastats)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+
+totals <- population_zaf %>%
+          filter(year == 2013) %>%
+          select(province, total)
+
+#mutate makes a new column
+
+compare_provinces <- mortality_zaf %>%
+    left_join(totals) %>%
+    mutate(rate = deaths / total * 1000) %>%
+    group_by(province, indicator) %>%
+    summarize(rate = mean(rate)) %>%
+    ungroup %>%
+    left_join(totals) %>%
+    spread(indicator,rate)
+
+```
+
+Column {.sidebar}
+====================================================
+
+This app explores the mortality data from the 
+[South Africa Data Portal](http://southafrica.opendataforafrica.org/)
+
+Use input below to select a cause of death to explore
+
+
+```{r}
+selectInput(inputId = "indicator",
+            label = "Choose a cause of death:",
+            choices = unique(mortality_zaf$indicator),
+            selected = "Diabetes mellitus (E10-E14)")
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+
