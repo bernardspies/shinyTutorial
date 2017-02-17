@@ -27,12 +27,16 @@ ui <- fluidPage(
                      label = "Choose a province:",
                      choices = unique(mortality_zaf$province),
                      selected = "Gauteng",
-                     multiple = TRUE)
+                     multiple = TRUE),
+         checkboxInput(inputId = "showtable",
+                       label = "Show table?",
+                       value = FALSE)
       ),
       
       # Show a plot of the generated distribution
       mainPanel(
-         plotOutput("LinePlot")
+         plotOutput("LinePlot"),
+         dataTableOutput("mortalityTable")
       )
    )
 )
@@ -41,14 +45,22 @@ ui <- fluidPage(
 server <- function(input, output) {
    
         output$LinePlot <- renderPlot({
-          mortality %>% 
-            filter(province %in% input$province) %>% 
-            ggplot(aes(year,deaths, color = indicator)) + 
-            facet_wrap(~province, scales = "free") +
-            geom_line(alpha = 0.8, size = 1.5) +
-            theme_minimal(base_size=18)
+                            mortality %>% 
+                              filter(province %in% input$province) %>% 
+                              ggplot(aes(year,deaths, color = indicator)) + 
+                              facet_wrap(~province, scales = "free") +
+                              geom_line(alpha = 0.8, size = 1.5) +
+                              theme_minimal(base_size=18)
      
          })
+        
+        output$mortalityTable <- renderDataTable({
+                        if(input$showtable) {
+                        datatable( mortality %>% 
+                          filter(province %in% input$province))
+                        }
+        })
+          
 }
 
 # Run the application 
