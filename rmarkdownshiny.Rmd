@@ -1,0 +1,44 @@
+---
+title: "R Markdown + Shiny"
+author: "Bernard Spies"
+date: "17 February 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(southafricastats)
+
+totals <- population_zaf %>%
+          filter(year == 2013) %>%
+          select(province, total)
+
+#mutate makes a new column
+
+compare_provinces <- mortality_zaf %>%
+    left_join(totals) %>%
+    mutate(rate = deaths / total * 1000) %>%
+    group_by(province, indicator) %>%
+    summarize(rate = mean(rate)) %>%
+    ungroup %>%
+    left_join(totals) %>%
+    spread(indicator,rate)
+
+```
+
+
+```{r}
+ggplot(compare_provinces,aes(`Tuberculosis (A15-A19)`,`Human immunodeficiency virus [HIV] disease (B20-B24)`, size=total)) +
+  geom_point(alpha = 0.8, color = "midnightblue")
+
+```
+
+
+
+
