@@ -3,6 +3,7 @@ title: "Mortality in South Africa"
 runtime: shiny
 output: 
   flexdashboard::flex_dashboard:
+    theme: lumen
     orientation: columns
     vertical_layout: fill
 ---
