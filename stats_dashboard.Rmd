@@ -13,6 +13,7 @@ library(southafricastats)
 library(dplyr)
 library(ggplot2)
 library(tidyr)
+library(leaflet)
 
 totals <- population_zaf %>%
           filter(year == 2013) %>%
@@ -28,6 +29,11 @@ compare_provinces <- mortality_zaf %>%
     ungroup %>%
     left_join(totals) %>%
     spread(indicator,rate)
+
+
+
+
+
 
 ```
 
@@ -50,11 +56,35 @@ selectInput(inputId = "indicator",
 ```
 
 
+
+
+Map {data-icon="fa-map-marker"}
+====================================================
+
+### Where is the mortality rate highest?
+
 ```{r}
+selected_df <- reactive({ 
+        subset_df <- compare_provinces[,c(1,which(colnames(compare_provinces) == input$indicator))]
+        colnames(subset_df) <- c("province","indicator")
+        population_zaf %>%
+              filter(year == 2013) %>%
+              left_join(subset_df, by="province") %>%
+              mutate(indicator = indicator / sum(indicator), na.rm=TRUE)
+  })
 
-
+renderLeaflet({
+    leaflet(selected_df()) %>%
+              addProviderTiles("CartoDB.Positron") %>%
+              addCircles(lng = ~longitude,
+                         lat = ~latitude,
+                         radius = ~sqrt(indicator) * 1e5,
+                         weight = 2.5,
+                         color = "magenta",
+                         popup = ~province)
+  
+})
 
 ```
-
 
 
