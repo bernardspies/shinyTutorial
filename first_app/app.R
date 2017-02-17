@@ -10,6 +10,7 @@
 library(shiny)
 library(dplyr)
 library(southafricastats)
+library(DT)
 
 mortality <- mortality_zaf %>%
              filter((indicator != "All causes"))
