@@ -8,6 +8,7 @@
 #
 
 library(shiny)
+library(dplyr)
 library(southafricastats)
 
 mortality <- mortality_zaf %>%
@@ -25,7 +26,8 @@ ui <- fluidPage(
          selectInput(inputId = "province",
                      label = "Choose a province:",
                      choices = unique(mortality_zaf$province),
-                     selected = "Gauteng")
+                     selected = "Gauteng",
+                     multiple = TRUE)
       ),
       
       # Show a plot of the generated distribution
@@ -40,8 +42,9 @@ server <- function(input, output) {
    
         output$LinePlot <- renderPlot({
           mortality %>% 
-            filter(province == input$province) %>% 
+            filter(province %in% input$province) %>% 
             ggplot(aes(year,deaths, color = indicator)) + 
+            facet_wrap(~province) +
             geom_line(alpha = 0.8, size = 1.5) +
             theme_minimal(base_size=18)
      
