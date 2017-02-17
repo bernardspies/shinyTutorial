@@ -51,7 +51,8 @@ server <- function(input, output) {
                               ggplot(aes(year,deaths, color = indicator)) + 
                               facet_wrap(~province, scales = "free") +
                               geom_line(alpha = 0.8, size = 1.5) +
-                              theme_minimal(base_size=18)
+                              theme_minimal(base_size=18) + 
+                              theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
      
          })
         
