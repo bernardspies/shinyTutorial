@@ -74,18 +74,18 @@ selected_df <- reactive({
 
 
 ```{r}
-renderPlot({
-  ggplot(selected_df(),aes(x,y, label=province)) +
-  geom_point(aes(size=total),
-             alpha = 0.8, color = "midnightblue") + 
-  geom_text(vjust = 2.5) +
-  theme_minimal() + 
-    labs(x = input$x_axis,
-         y = input$y_axis)
-  
-  
-})
+fillCol(height=800,
+      renderPlot({
+        ggplot(selected_df(),aes(x,y, label=province)) +
+        geom_point(aes(size=total),
+                   alpha = 0.8, color = "midnightblue") + 
+        geom_text(vjust = 2.5) +
+        theme_minimal() + 
+          labs(x = input$x_axis,
+               y = input$y_axis)
 
+},height=800)
+)
 
 ```
 
