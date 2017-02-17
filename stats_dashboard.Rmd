@@ -15,6 +15,7 @@ library(ggplot2)
 library(tidyr)
 library(leaflet)
 
+
 totals <- population_zaf %>%
           filter(year == 2013) %>%
           select(province, total)
@@ -23,14 +24,15 @@ totals <- population_zaf %>%
 
 compare_provinces <- mortality_zaf %>%
     left_join(totals) %>%
-    mutate(rate = deaths / total * 1000) %>%
+    mutate(rate = deaths / total * 1e3) %>%
     group_by(province, indicator) %>%
     summarize(rate = mean(rate)) %>%
     ungroup %>%
     left_join(totals) %>%
     spread(indicator,rate)
 
-
+mortality_zaf <- mortality_zaf %>%
+      filter(indicator != "All causes")
 
 
 
@@ -78,7 +80,7 @@ renderLeaflet({
               addProviderTiles("CartoDB.Positron") %>%
               addCircles(lng = ~longitude,
                          lat = ~latitude,
-                         radius = ~sqrt(indicator) * 1e5,
+                         radius = ~sqrt(indicator) * 3e5,
                          weight = 2.5,
                          color = "magenta",
                          popup = ~province)
@@ -86,5 +88,70 @@ renderLeaflet({
 })
 
 ```
+
+Comparing provinces {data-icon="fa-list"}
+=====================================================
+
+### How does the selected mortality rate compare to the overall mortality rate?
+
+
+```{r}
+
+scatterplot_df <- reactive({
+        subset_df <- compare_provinces[,c(1,2,
+                                          which(colnames(compare_provinces) == "All causes"),
+                                          which(colnames(compare_provinces) == input$indicator)
+                                          )]
+        colnames(subset_df) <- c("province","total","x","y")
+        subset_df
+})
+
+renderPlot({
+        ggplot(scatterplot_df(),
+               aes(x, y, 
+                   label=province)) +
+        geom_point(aes(size=total),
+                   alpha = 0.8, color = "midnightblue") + 
+        geom_text(vjust = 2.5) +
+        theme_minimal() + 
+          labs(x = "All causes",
+               y = input$indicator)
+})
+
+```
+
+
+Changes in time{data-icon="fa-area-chart"}
+=====================================================
+
+### How have the number of deaths changed over time?
+
+```{r}
+
+renderPlot({
+  mortality_zaf %>%
+    filter(indicator == input$indicator) %>%
+    ggplot(aes(year, deaths, color = province)) + 
+    geom_line(alpha = 0.8, size= 1.5) +
+    theme_minimal(base_size = 18) + 
+    labs(x = NULL, y="Number of deaths")
+  
+  
+})
+
+
+```
+
+
+Table {data-icon="fa-table"}
+====================================================
+
+Check out the data here
+
+```{r}
+
+
+```
+
 
 
