@@ -18,6 +18,8 @@ library(tidyr)
 library(leaflet)
 library(DT)
 
+#Add an extra comment from my pc
+
 
 totals <- population_zaf %>%
           filter(year == 2013) %>%
