@@ -18,7 +18,7 @@ library(tidyr)
 library(leaflet)
 library(DT)
 
-#Add an extra comment from my pc
+#another comment
 
 
 totals <- population_zaf %>%
@@ -59,6 +59,7 @@ selectInput(inputId = "indicator",
             choices = unique(mortality_zaf$indicator),
             selected = "Diabetes mellitus (E10-E14)")
 
+#another comment
 
 ```
 
