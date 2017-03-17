@@ -20,6 +20,8 @@ library(DT)
 
 #another comment
 
+#new comment from a different laptop to test git works from RStusio
+
 
 totals <- population_zaf %>%
           filter(year == 2013) %>%
